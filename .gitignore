@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+secret.env
+marked.txt
+generated.jsonl
+benchmark-results*.json
+simulations/
+research_runs/
+
+secret.env

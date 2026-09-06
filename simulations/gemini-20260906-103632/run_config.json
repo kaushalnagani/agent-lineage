@@ -1,0 +1,13 @@
+{
+  "model": "gemini-2.5-flash-lite",
+  "samples": 3,
+  "min_words": 120,
+  "tag_bytes": 8,
+  "redundancies": [
+    1,
+    3
+  ],
+  "seed": 13,
+  "api_key_recorded": false,
+  "watermark_secret_source": "ephemeral-run-secret"
+}

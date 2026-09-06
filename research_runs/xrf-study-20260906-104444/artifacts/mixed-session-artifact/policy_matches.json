@@ -1,0 +1,17 @@
+[
+  {
+    "session_id": "session-safe-a",
+    "status": "authorized",
+    "action": "review-cross-session"
+  },
+  {
+    "session_id": "session-safe-b",
+    "status": "authorized",
+    "action": "review-cross-session"
+  },
+  {
+    "session_id": "session-malicious-c",
+    "status": "malicious",
+    "action": "block"
+  }
+]

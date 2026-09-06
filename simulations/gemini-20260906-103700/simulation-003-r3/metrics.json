@@ -1,0 +1,14 @@
+{
+  "encoded": true,
+  "original_characters": 1397,
+  "watermarked_characters": 1448,
+  "inserted_watermark_characters": 51,
+  "original_words": 177,
+  "visible_words": 177,
+  "visible_text_identical": true,
+  "visible_word_change_count": 0,
+  "visible_similarity_ratio": 1.0,
+  "detection_found": true,
+  "exact_session_tag_recovered": true,
+  "detection_confidence": 1.0
+}

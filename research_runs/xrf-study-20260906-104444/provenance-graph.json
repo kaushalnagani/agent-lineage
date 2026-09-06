@@ -1,0 +1,156 @@
+{
+  "nodes": [
+    {
+      "id": "origin-doc-001",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "editor-doc-001",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "artifact-doc-001-v1",
+      "type": "artifact",
+      "status": "clean"
+    },
+    {
+      "id": "artifact-doc-001-v2",
+      "type": "artifact",
+      "status": "review"
+    },
+    {
+      "id": "origin-doc-003",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "editor-doc-003",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "artifact-doc-003-v1",
+      "type": "artifact",
+      "status": "clean"
+    },
+    {
+      "id": "artifact-doc-003-v2",
+      "type": "artifact",
+      "status": "review"
+    },
+    {
+      "id": "origin-doc-005",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "editor-doc-005",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "artifact-doc-005-v1",
+      "type": "artifact",
+      "status": "clean"
+    },
+    {
+      "id": "artifact-doc-005-v2",
+      "type": "artifact",
+      "status": "review"
+    },
+    {
+      "id": "session-safe-a",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "session-safe-b",
+      "type": "session",
+      "status": "authorized"
+    },
+    {
+      "id": "session-malicious-c",
+      "type": "session",
+      "status": "malicious"
+    },
+    {
+      "id": "mixed-artifact",
+      "type": "artifact",
+      "status": "mixed"
+    },
+    {
+      "id": "destination-reviewer",
+      "type": "session",
+      "status": "authorized"
+    }
+  ],
+  "edges": [
+    {
+      "source": "origin-doc-001",
+      "target": "artifact-doc-001-v1",
+      "relation": "created"
+    },
+    {
+      "source": "artifact-doc-001-v1",
+      "target": "editor-doc-001",
+      "relation": "read"
+    },
+    {
+      "source": "editor-doc-001",
+      "target": "artifact-doc-001-v2",
+      "relation": "modified"
+    },
+    {
+      "source": "origin-doc-003",
+      "target": "artifact-doc-003-v1",
+      "relation": "created"
+    },
+    {
+      "source": "artifact-doc-003-v1",
+      "target": "editor-doc-003",
+      "relation": "read"
+    },
+    {
+      "source": "editor-doc-003",
+      "target": "artifact-doc-003-v2",
+      "relation": "modified"
+    },
+    {
+      "source": "origin-doc-005",
+      "target": "artifact-doc-005-v1",
+      "relation": "created"
+    },
+    {
+      "source": "artifact-doc-005-v1",
+      "target": "editor-doc-005",
+      "relation": "read"
+    },
+    {
+      "source": "editor-doc-005",
+      "target": "artifact-doc-005-v2",
+      "relation": "modified"
+    },
+    {
+      "source": "session-safe-a",
+      "target": "mixed-artifact",
+      "relation": "created section"
+    },
+    {
+      "source": "session-safe-b",
+      "target": "mixed-artifact",
+      "relation": "legitimate edit"
+    },
+    {
+      "source": "session-malicious-c",
+      "target": "mixed-artifact",
+      "relation": "suspicious section"
+    },
+    {
+      "source": "mixed-artifact",
+      "target": "destination-reviewer",
+      "relation": "intercepted before model"
+    }
+  ]
+}

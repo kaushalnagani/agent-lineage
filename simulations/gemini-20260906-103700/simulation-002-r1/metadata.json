@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-09-06T05:07:05.197150+00:00",
+  "model": "gemini-3.5-flash-lite",
+  "prompt": "Describe the benefits and limitations of session-attributable text watermarking for autonomous agents.",
+  "session_id": "gemini-20260906-103700-sample-2",
+  "session_tag": "ff088397eacaa9f2",
+  "config": {
+    "tag_bytes": 8,
+    "redundancy": 1
+  },
+  "capacity": {
+    "eligible_words": 169,
+    "required_words": 17,
+    "frame_bytes": 17,
+    "redundancy": 1,
+    "fits": true
+  },
+  "usage": {
+    "promptTokenCount": 69,
+    "candidatesTokenCount": 203,
+    "totalTokenCount": 272,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 69
+      }
+    ],
+    "serviceTier": "standard"
+  }
+}

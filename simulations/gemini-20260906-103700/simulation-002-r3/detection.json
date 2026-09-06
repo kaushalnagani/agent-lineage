@@ -1,0 +1,9 @@
+{
+  "found": true,
+  "tag_hex": "ff088397eacaa9f2",
+  "version": 1,
+  "carrier_offset": 0,
+  "corrected_groups": 0,
+  "confidence": 1.0,
+  "reason": "valid XRF prefix and CRC"
+}

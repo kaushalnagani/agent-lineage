@@ -1,0 +1,28 @@
+### Introduction
+
+Modern software󠅈 supply󠅈 chains󠅈 and󠅈 distributed󠅈 collaborative󠅂 environments󠅂 frequently󠅂 interleave󠅂 automated󠅂 upstream󠄶 data󠄶 ingestion󠄶 with󠄶 downstream󠄶 human︁ or︁ scripted︁ editing︁. A︁ critical︈ challenge︈ for︈ security︈ defenders︈ is󠇝 distinguishing󠇝 a󠇝 genuinely󠇝 malicious󠇝 source󠄻 session󠄻—characterized󠄻 by󠄻 unauthorized󠄻 data󠄦 injection󠄦, compromised󠄦 credentials󠄦, or󠄦 malicious󠆉 payload󠆉 transit󠆉—from󠆉 legitimate󠆉 downstream️ editors️ who️ modify️, reformat️, or󠅊 curate󠅊 the󠅊 content󠅊. Naive󠅊 telemetry󠅪 filtering󠅪 based󠅪 solely󠅪 on󠅪 mutation󠅃 variance󠅃 often󠅃 fails, as󠅃 both󠅃 threat󠆘 actors󠆘 and󠆘 authorized󠆘 maintainers󠆘 introduce󠄼 semantic󠄼 drift󠄼 into󠄼 the󠄼 data󠇖 stream󠇖. This󠇖 discussion󠇖 delineates󠇖 the󠅗 architectural󠅗 telemetry󠅗, cryptographic󠅗 verification󠅗 mechanisms, and heuristic metrics required to accurately partition malicious ingress from benign downstream processing.
+
+### Cryptographic Provenance and Identity Attestation
+
+The foundational layer for distinguishing sources from downstream editors relies on robust cryptographic provenance. Defenders must enforce immutable transaction signing at the point of origin, binding every source session to a hardware-backed root of trust or a strongly audited identity provider. As data traverses downstream editors, each modification must be appended to a cryptographic append-only ledger (such as a Merkle tree structure or verifiable data registry) rather than overwriting the source payload. 
+
+Downstream editors operate under distinct delegation scopes defined by fine-grained access control lists (ACLs) and JSON Web Tokens (JWTs) embedded with specific operational capabilities. When an anomaly is detected, defenders must inspect the validation chain: a legitimate downstream editor presents a valid, time-bounded delegation token countersigned by the original source or an authorized administrative authority. Conversely, a malicious source session typically lacks verifiable upstream provenance, presents forged or expired identity assertions, or attempts privilege escalation by stripping downstream attestation headers.
+
+### Behavioral Heuristics and Semantic Analysis
+
+Beyond cryptographic verification, defenders must analyze the behavioral envelope of the session. Legitimate downstream editors exhibit bounded operational velocity, interacting with the data stream in patterns consistent with human cognitive pacing or deterministic batch-processing schedules. Their modifications typically preserve schema integrity, adhere to defined type constraints, and target specific subsets of the data payload.
+
+In contrast, a malicious source session often exhibits unbounded ingestion rates, high-entropy payloads indicative of packed or encrypted exploits, and systemic structural anomalies designed to bypass downstream parsing logic. Defenders should deploy stream-processing anomaly detectors that evaluate semantic entropy, structural depth violations, and unexpected schema migrations. By continuously profiling the behavioral baseline of authorized editors, defenders can isolate sessions that inject foreign execution primitives, out-of-band network callbacks, or unauthorized script blocks into the downstream pipeline.
+
+### Limitations of Current Detection Paradigms
+
+Despite rigorous cryptographic and behavioral controls, defenders face significant limitations. First, compromised downstream editor accounts present a severe blind spot; if a legitimate editor's credentials are stolen, their subsequent malicious modifications will carry valid cryptographic signatures and mirror expected behavioral velocities. Second, highly sophisticated threat actors can execute "slow-bleed" ingestion attacks, mimicking human edit frequencies and remaining structurally compliant with schema definitions while exfiltrating data or slowly degrading system integrity over extended temporal windows. Finally, the computational overhead of continuous cryptographic verification and deep semantic parsing can introduce unacceptable latency in high-throughput real-time environments.
+
+### Concrete Evaluation Criteria
+
+To operationalize the distinction between malicious sources and legitimate editors, security systems must be evaluated against precise, quantifiable metrics. Defenders should implement and continuously monitor the following criteria:
+
+*   **Provenance Integrity Ratio (PIR):** The percentage of incoming data blocks possessing an unbroken, cryptographically verifiable chain of custody from origin to the current processing node. A drop in PIR indicates unverified source injection.
+*   **Schema Mutation Variance (SMV):** A metric tracking the frequency and structural magnitude of schema alterations. Legitimate downstream editors maintain a near-zero SMV for core data types, whereas malicious sessions often trigger high-variance structural shifts.
+*   **Attestation Verification Latency (AVL):** The time required to validate downstream delegation tokens and cryptographic signatures. Systems must maintain an AVL below an acceptable threshold (e.g., < 15 milliseconds) to prevent starvation of real-time downstream pipelines.
+*   **False Positive Disruption Rate (FPDR):** The frequency with which legitimate downstream editing sessions are incorrectly flagged and quarantined as malicious source sessions. This must be maintained below 0.01% to ensure operational continuity.

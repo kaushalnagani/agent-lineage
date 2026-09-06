@@ -1,0 +1,8 @@
+{
+  "sessions": [
+    {"session_id": "agent-session-safe", "status": "authorized"},
+    {"session_id": "agent-session-under-review", "status": "suspicious"},
+    {"session_id": "agent-session-blocked", "status": "malicious"}
+  ]
+}
+

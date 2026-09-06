@@ -1,0 +1,53 @@
+### Introduction and Theoretical Framework
+
+The deployment of cryptographic and statistical watermarks in Large Language Models (LLMs) has emerged as a primary mechanism for provenance tracking and copyright enforcement. Statistical watermarks operate by partitioning the model’s vocabulary during the generation phase into a randomized "green list" and "red list," biased via pseudo-random functions keyed to preceding tokens. While these schemes allow for robust statistical detection of machine-generated text, their operational utility is fundamentally bounded by two competing metrics: the false positive rate (FPR) and exact payload recovery fidelity. In multi-bit watermarking paradigms—where the watermark encodes a discrete, high-entropy binary payload rather than a binary "is-watermarked" flag—this trade-off becomes exceptionally complex. 
+
+Evaluating multi-bit watermarks requires rigorous formalization of statistical hypothesis testing alongside information-theoretic recovery bounds. A false positive occurs when unwatermarked human text or third-party generation is incorrectly classified as containing a specific watermark or payload, leading to severe downstream consequences such as wrongful attribution or censorship. Conversely, payload recovery evaluates the bit-error rate (BER) or exact-match accuracy of the embedded data vector extracted from the text. This discussion provides a technically precise evaluation framework for analyzing false positives and exact payload recovery in multi-bit LLM watermarking, detailing the operational criteria, mathematical boundaries, and inherent limitations of current methodologies.
+
+### Mechanics of Multi-Bit Payload Embedding
+
+Unlike single-bit watermarks that merely signal model provenance by dynamically altering sampling distributions to favor a secret green list, multi-bit watermarks encode discrete messages $M \in \{0,1\}^K$ of length $K$. This is typically achieved by segmenting the generation trajectory into sequential blocks and modulating the vocabulary partitioning function $f(\theta_t, s_t)$ using both the cryptographic key and specific segments of the payload $M$. 
+
+During generation, the logit vector for token $t$ at context $s_t$ is modified to increase the probability mass of the designated green list associated with the targeted payload chunk. The recovery phase operates inversely. Given an observed token sequence $X = (x_1, x_2, \dots, x_N)$, an authorized detector applies the inverse function, evaluating token frequencies against expected statistical baselines to reconstruct the embedded payload $\hat{M}$. 
+
+The primary challenge in this architecture is the dilution of statistical signal. As the payload space expands (i.e., as $K$ increases), the parameter space governing the green lists must be further subdivided, or the entropy injected per token must be distributed across more categories. This directly impacts the statistical confidence of the detector. If the green list fraction $\gamma$ is held constant while $K$ grows, the number of tokens available to statistically validate each bit of the payload decreases, exponentially elevating the vulnerability to stochastic noise introduced by natural language constraints.
+
+### False Positive Evaluation Criteria and Error Bounds
+
+In single-bit watermarks, the false positive rate is evaluated via a binomial or Z-test, measuring the probability that a human-written text of length $N$ achieves a green-token count equal to or greater than the observed count by chance alone. In multi-bit regimes, the false positive evaluation must account for two distinct failure modes: accidental provenance attribution (false positive on the existence of *any* watermark) and payload collision (false positive on the *exact* recovery of a specific payload).
+
+The formal evaluation criteria for false positives rely on the Bonferroni correction or union bounds across the entire hypothesis space of possible payloads $2^K$. Let $H_0$ be the null hypothesis that the text $X$ is completely unwatermarked. The probability of a false positive for a specific target payload $m$ is bounded by the tail probability of the test statistic $T(X, m)$. However, when scanning for an arbitrary payload across $2^K$ possibilities, the family-wise error rate (FWER) escalates rapidly:
+
+$$\text{FWER} \le 1 - (1 - \alpha)^{2^K}$$
+
+where $\alpha$ is the per-test significance level. Consequently, robust evaluation frameworks must measure the empirical FPR not against a single pre-specified payload, but across a massive corpus of diverse human-authored texts (e.g., standard benchmarks like C4 or Pile) evaluated against a randomized search space of payloads. 
+
+Concrete evaluation criteria for false positives must include:
+1. **Unconditional FPR ($FPR_{univ}$):** The probability that an unwatermarked text registers a statistically significant detection signal for *any* payload above a threshold $\tau$.
+2. **Conditional Collision Rate ($FPR_{col}$):** Given that a text is recognized as watermarked, the probability that an incorrect payload is recovered with a confidence score exceeding the threshold, measured as a function of text length $N$.
+3. **Length-Normalized Decision Thresholds:** Evaluation of how the required text length $N$ scales to maintain a strict $\text{FPR} \le 10^{-6}$ as the payload bit-length $K$ increases from 8 to 64 bits.
+
+### Exact Payload Recovery Metrics
+
+Exact payload recovery evaluates the capacity of the watermarked text to reliably transmit the embedded message $M$ through the stochastic channel of natural language generation. Natural language is a highly constrained channel governed by syntax, semantics, and perplexity constraints. When an LLM is forced to select tokens based on a pseudo-random green list derived from payload bits, it suffers a Kullback-Leibler (KL) divergence penalty from its optimal token distribution, which can degrade text quality and force the model into unnatural phrasing.
+
+To rigorously assess recovery, evaluation pipelines must decouple Bit Error Rate (BER) from Exact Match Accuracy (EMA). While BER measures the Hamming distance between the target payload $M$ and the recovered payload $\hat{M}$ normalized by $K$, EMA strictly requires that $M = \hat{M}$. In mission-critical tracing applications, partial recovery is often legally or operationally insufficient, making EMA the primary metric of success.
+
+Concrete evaluation criteria for payload recovery include:
+1. **Payload Capacity vs. Text Length ($K/N$ ratio):** Determining the minimum token length $N$ required to achieve an EMA of $\ge 0.99$ for a given bit-length $K$ under standard decoding temperatures.
+2. **Robustness to Channel Noise:** Evaluating payload recovery under simulated deletion, insertion, and substitution attacks, as well as benign transformations such as paraphrasing models or human editing. The evaluation must quantify the degradation of EMA as a function of the edit distance applied to the watermarked text.
+3. **Perplexity Degradation Delta:** Measuring the increase in model perplexity caused by the multi-bit embedding constraint. A payload recovery scheme that achieves high EMA at the cost of catastrophic text degradation is operationally invalid.
+
+### Limitations of Current Multi-Bit Evaluation Methodologies
+
+Despite theoretical advancements, current evaluation methodologies for multi-bit LLM watermarks face severe limitations that restrict their deployment in adversarial real-world environments.
+
+First, the assumption of i.i.d. token generation fails in practice. Natural language exhibits strong long-range semantic dependencies and syntactic structures. Pseudo-random green-list allocations that treat tokens as independent trials overestimate the statistical power of the detector. When evaluation frameworks rely on simplified binomial models, they frequently underestimate the empirical false positive rate on structured human text, which often contains repetitive or formulaic phrasing (e.g., legal documents, boilerplate code) that mimics the statistical signatures of constrained green lists.
+
+Second, multi-bit schemes suffer from an intractable trade-off between payload capacity and detectability. As $K$ scales, the entropy budget per bit shrinks unless the text length $N$ scales proportionally. For short-form text (e.g., social media posts of $N < 100$ tokens), reliable multi-bit payload recovery is mathematically unfeasible without inducing unacceptable semantic collapse in the generated output. Current evaluations often benchmark on artificially long text corpora (e.g., $N > 1000$ tokens), failing to reflect the short-context realities of modern LLM interactions.
+
+Third, evaluation suites struggle to model adaptive adversaries. While random perturbation tests (such as paraphrasing via smaller LLMs) provide a baseline for robustness, they do not simulate targeted removal attacks designed to disrupt the specific cryptographic boundaries of the payload partitioning function. Evaluating payload recovery under worst-case adversarial conditions remains an open theoretical problem, as the discrete nature of text allows attackers to inject noise that specifically targets the lowest-entropy segments of the embedded payload.
+
+### Conclusion
+
+Evaluating false positives and exact payload recovery in multi-bit language-model watermarks requires a dual-faceted statistical approach that balances strict false positive containment against information-theoretic recovery bounds. While multi-bit architectures offer advanced provenance capabilities by embedding granular data into generated text, they introduce compounding vulnerabilities: family-wise error rate inflation, sensitivity to the structural constraints of natural language, and severe capacity-length trade-offs. Future research must move beyond idealized i.i.d. assumptions, developing empirical evaluation frameworks that account for linguistic dependencies, short-form text limitations, and adaptive adversarial transformations to ensure reliable, legally defensible model attribution.

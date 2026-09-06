@@ -1,0 +1,104 @@
+[
+  {
+    "raw_offset": 1,
+    "visible_offset": 1,
+    "codepoint": "U+E0148",
+    "encoded_byte": 88
+  },
+  {
+    "raw_offset": 14,
+    "visible_offset": 13,
+    "codepoint": "U+E0142",
+    "encoded_byte": 82
+  },
+  {
+    "raw_offset": 23,
+    "visible_offset": 21,
+    "codepoint": "U+E0136",
+    "encoded_byte": 70
+  },
+  {
+    "raw_offset": 32,
+    "visible_offset": 29,
+    "codepoint": "U+FE01",
+    "encoded_byte": 1
+  },
+  {
+    "raw_offset": 37,
+    "visible_offset": 33,
+    "codepoint": "U+FE08",
+    "encoded_byte": 8
+  },
+  {
+    "raw_offset": 45,
+    "visible_offset": 40,
+    "codepoint": "U+E01AC",
+    "encoded_byte": 188
+  },
+  {
+    "raw_offset": 59,
+    "visible_offset": 53,
+    "codepoint": "U+E012D",
+    "encoded_byte": 61
+  },
+  {
+    "raw_offset": 74,
+    "visible_offset": 67,
+    "codepoint": "U+E011C",
+    "encoded_byte": 44
+  },
+  {
+    "raw_offset": 83,
+    "visible_offset": 75,
+    "codepoint": "U+E012B",
+    "encoded_byte": 59
+  },
+  {
+    "raw_offset": 94,
+    "visible_offset": 85,
+    "codepoint": "U+E0108",
+    "encoded_byte": 24
+  },
+  {
+    "raw_offset": 104,
+    "visible_offset": 94,
+    "codepoint": "U+E01E5",
+    "encoded_byte": 245
+  },
+  {
+    "raw_offset": 116,
+    "visible_offset": 105,
+    "codepoint": "U+E01DD",
+    "encoded_byte": 237
+  },
+  {
+    "raw_offset": 130,
+    "visible_offset": 118,
+    "codepoint": "U+E0195",
+    "encoded_byte": 165
+  },
+  {
+    "raw_offset": 138,
+    "visible_offset": 125,
+    "codepoint": "U+E0153",
+    "encoded_byte": 99
+  },
+  {
+    "raw_offset": 142,
+    "visible_offset": 128,
+    "codepoint": "U+E01D6",
+    "encoded_byte": 230
+  },
+  {
+    "raw_offset": 153,
+    "visible_offset": 138,
+    "codepoint": "U+E0113",
+    "encoded_byte": 35
+  },
+  {
+    "raw_offset": 161,
+    "visible_offset": 145,
+    "codepoint": "U+E019A",
+    "encoded_byte": 170
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "found": true,
+    "tag_hex": "e728635e15a808fd",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC"
+  },
+  {
+    "found": true,
+    "tag_hex": "462eea8f1bcf5618",
+    "version": 1,
+    "carrier_offset": 51,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC"
+  },
+  {
+    "found": true,
+    "tag_hex": "5f765e23a585d2c6",
+    "version": 1,
+    "carrier_offset": 341,
+    "corrected_groups": 17,
+    "confidence": 0.6666666666666665,
+    "reason": "valid XRF prefix and CRC"
+  }
+]

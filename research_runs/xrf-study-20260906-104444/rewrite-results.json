@@ -1,0 +1,65 @@
+[
+  {
+    "document": "doc-001",
+    "target_words": 250,
+    "origin_mark_survived_model_rewrite": false,
+    "editor_mark_detected": true,
+    "origin_words": 350,
+    "revised_words": 350,
+    "visible_similarity_ratio": 1.0,
+    "usage": {
+      "promptTokenCount": 696,
+      "candidatesTokenCount": 440,
+      "totalTokenCount": 1136,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 696
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "document": "doc-003",
+    "target_words": 500,
+    "origin_mark_survived_model_rewrite": false,
+    "editor_mark_detected": true,
+    "origin_words": 582,
+    "revised_words": 582,
+    "visible_similarity_ratio": 1.0,
+    "usage": {
+      "promptTokenCount": 1058,
+      "candidatesTokenCount": 802,
+      "totalTokenCount": 1860,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1058
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "document": "doc-005",
+    "target_words": 1000,
+    "origin_mark_survived_model_rewrite": false,
+    "editor_mark_detected": true,
+    "origin_words": 1367,
+    "revised_words": 1367,
+    "visible_similarity_ratio": 1.0,
+    "usage": {
+      "promptTokenCount": 2173,
+      "candidatesTokenCount": 2118,
+      "totalTokenCount": 4291,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 2173
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  }
+]

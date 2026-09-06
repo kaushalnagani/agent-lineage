@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  },
+  "nfc": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  },
+  "nfkc": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  },
+  "strip": {
+    "found": false,
+    "tag_hex": null,
+    "version": null,
+    "carrier_offset": null,
+    "corrected_groups": 0,
+    "confidence": 0.0,
+    "reason": "no valid XRF frame or CRC",
+    "exact_session_tag_recovered": false
+  },
+  "drop10": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  },
+  "corrupt05": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  },
+  "spaces": {
+    "found": true,
+    "tag_hex": "bc3d2c3b18f5eda5",
+    "version": 1,
+    "carrier_offset": 0,
+    "corrected_groups": 0,
+    "confidence": 1.0,
+    "reason": "valid XRF prefix and CRC",
+    "exact_session_tag_recovered": true
+  }
+}
