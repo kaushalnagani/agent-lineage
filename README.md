@@ -4,7 +4,7 @@ An experimental Python prototype for attaching authenticated session provenance 
 
 > **Prototype, not a security boundary.** A valid mark is evidence that a cooperating issuer marked some content. It does not prove that the content is safe or malicious. An absent mark means **unknown**, not safe.
 
-![Distributed fragment benchmark](fragment_studies/fragment-study-20260906-120335/fragment-study.png)
+![Watermark frequency, repetition, corruption, and fragment-size study](frequency_studies/frequency-study-20260906-215314/frequency-study.svg)
 
 ## The idea
 
@@ -49,7 +49,23 @@ Frame-byte repetition and frame distribution solve different problems:
 
 ## What the experiments show
 
-Two checked-in, reproducible studies contain raw CSV/JSON data, reports, and figures.
+Three checked-in, reproducible studies contain raw CSV/JSON data, reports, and figures.
+
+### Frequency × repetition × corruption study
+
+The main figure crosses four variables simultaneously across 4,500 deterministic trials:
+
+- **X-axis:** copied fragment length in lines—the amount consumed by another agent.
+- **Y-axis:** variation-selector corruption rate.
+- **Panel columns:** complete-frame interval; 100 words is three times more frequent than 300 words and six times more frequent than 600 words.
+- **Panel rows:** per-byte repetition level (`r1`, `r3`, or `r5`).
+- **Cell color and label:** exact authenticated recovery probability; both HMAC-derived tag and CRC must validate.
+
+The result makes the trade-off visible. Frequent placement mainly helps short copied fragments; repetition mainly helps damaged carrier symbols. At 10 clean lines, `r1` recovery fell from 100% with a 100-word interval to 30% with a 600-word interval. At 50 lines and 20% corruption, `r3` recovered 100%, 85%, and 50% at 100-, 300-, and 600-word intervals. With `r5`, 200-line fragments retained 95–100% recovery even at 35% corruption across all tested intervals.
+
+- [Study explanation](frequency_studies/frequency-study-20260906-215314/REPORT.md)
+- [All 225 aggregate cells](frequency_studies/frequency-study-20260906-215314/frequency-results.csv)
+- [Run metadata](frequency_studies/frequency-study-20260906-215314/summary.json)
 
 ### Distributed-fragment study
 
@@ -160,6 +176,7 @@ scripts/
   run_research_study.py   long-form and model-mediated experiments
 tests/                     unit and study tests
 fragment_studies/         selected reproducible fragment evidence
+frequency_studies/        four-dimensional placement/recovery evidence
 research_runs/            selected long-form evidence
 ```
 

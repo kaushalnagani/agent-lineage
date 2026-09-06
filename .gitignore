@@ -12,3 +12,4 @@ benchmark-results*.json
 simulations/*/
 research_runs/*/
 fragment_studies/*/
+frequency_studies/*/
