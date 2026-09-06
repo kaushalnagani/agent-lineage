@@ -177,6 +177,41 @@ def embed_watermark(
     return result
 
 
+def embed_distributed_watermark(
+    text: str,
+    session_id: str,
+    secret: str | bytes,
+    config: WatermarkConfig = WatermarkConfig(),
+    interval_carriers: int = 300,
+    preserve_existing: bool = False,
+) -> str:
+    """Embed complete, independently decodable frames throughout long prose.
+
+    ``interval_carriers`` is the distance between frame starts. Each frame is
+    complete, so a copied subsection can decode without material from the
+    beginning of the original document.
+    """
+    if interval_carriers < config.minimum_carriers:
+        raise ValueError("interval_carriers must be at least one complete frame")
+    clean = text if preserve_existing else strip_watermark_characters(text)
+    tag = session_tag(secret, session_id, config.tag_bytes)
+    symbols = [byte for byte in _frame(tag) for _ in range(config.redundancy)]
+    carriers = [end for end in _carrier_ends(clean) if end >= len(clean) or _selector_to_byte(clean[end]) is None]
+    if len(carriers) < len(symbols):
+        raise CapacityError(f"need {len(symbols)} eligible words, found {len(carriers)}")
+    starts = list(range(0, len(carriers) - len(symbols) + 1, interval_carriers))
+    tail_start = len(carriers) - len(symbols)
+    if tail_start - starts[-1] >= interval_carriers // 2:
+        starts.append(tail_start)
+    insertions = []
+    for start in starts:
+        insertions.extend(zip(carriers[start:start + len(symbols)], symbols))
+    result = clean
+    for position, value in reversed(insertions):
+        result = result[:position] + _byte_to_selector(value) + result[position:]
+    return result
+
+
 def _observations(text: str) -> list[int | None]:
     """Read a selector, if present, after every eligible carrier word."""
     carriers = _carrier_ends(text)

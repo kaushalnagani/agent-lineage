@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import unittest
 
-from watermark_lab import CapacityError, WatermarkConfig, detect_watermark, detect_watermarks, embed_watermark, session_tag
+from watermark_lab import CapacityError, WatermarkConfig, detect_watermark, detect_watermarks, embed_watermark, embed_distributed_watermark, session_tag
+from watermark_lab.code_provenance import create_code_manifest, verify_code_manifest
 from watermark_lab.core import _byte_to_selector, _selector_to_byte, rendered_equivalent, strip_watermark_characters
 from watermark_lab.registry import match_tag
 
@@ -87,6 +88,22 @@ class WatermarkTests(unittest.TestCase):
                 session_tag(SECRET, "session-two", 4).hex(),
             },
         )
+
+    def test_distributed_mark_survives_middle_fragment(self) -> None:
+        long_text = TEXT * 20
+        marked = embed_distributed_watermark(long_text, "distributed", SECRET, WatermarkConfig(4, 1), 100)
+        words = marked.split()
+        fragment = " ".join(words[len(words)//3:len(words)//3+180])
+        self.assertEqual(detect_watermark(fragment, 1).tag_hex, session_tag(SECRET, "distributed", 4).hex())
+
+    def test_code_manifest_localizes_change(self) -> None:
+        code = "".join(f"value_{i} = {i}\n" for i in range(120))
+        manifest = create_code_manifest(code, "coder", SECRET, chunk_lines=20)
+        changed = code.replace("value_45 = 45", "value_45 = dangerous_call()")
+        result = verify_code_manifest(changed, manifest, SECRET)
+        self.assertTrue(result["manifest_authentic"])
+        self.assertFalse(result["exact_content"])
+        self.assertEqual(result["changed_chunks"], [2])
 
 
 if __name__ == "__main__":

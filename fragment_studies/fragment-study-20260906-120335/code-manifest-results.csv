@@ -1,0 +1,6 @@
+case,edited_lines,total_chunks,matching_chunks,exact_content,manifest_authentic,changed_chunks
+no-edit control,0,24,24,True,True,[]
+single-line edit,1,24,23,False,True,[5]
+three-line localized edit,3,24,23,False,True,[12]
+two-line cross-chunk-boundary edit,2,24,22,False,True,"[3, 4]"
+two scattered single-line edits,2,24,22,False,True,"[2, 17]"

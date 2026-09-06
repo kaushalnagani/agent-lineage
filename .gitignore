@@ -7,4 +7,8 @@ marked.txt
 generated.jsonl
 benchmark-results*.json
 
-secret.env
+# Local/generated runs are ignored by default. Selected evidence already
+# committed under these directories remains tracked.
+simulations/*/
+research_runs/*/
+fragment_studies/*/

@@ -1,186 +1,185 @@
-# XRF Session Watermark Lab
+# XRF Agent Provenance
 
-An experimental harness for embedding an opaque session tag into agent prose,
-detecting it before another model call, matching it to a session registry, and
-benchmarking fidelity and robustness.
+An experimental Python prototype for attaching authenticated session provenance to AI-agent prose, recovering it from copied fragments, and tracking exact changes to code without modifying the code itself.
 
-This is a research sensor, not a complete sandbox. The first codec uses Unicode
-variation selectors because they preserve visible text exactly and provide one
-byte per eligible word. They can be removed by sanitizers, deliberate attacks,
-or systems that do not preserve Unicode variation selectors. Production systems
-should combine an in-band watermark with signed out-of-band provenance, strict
-session isolation, scoped credentials, and egress controls.
+> **Prototype, not a security boundary.** A valid mark is evidence that a cooperating issuer marked some content. It does not prove that the content is safe or malicious. An absent mark means **unknown**, not safe.
 
-## Frame
+![Distributed fragment benchmark](fragment_studies/fragment-study-20260906-120335/fragment-study.png)
 
-The encoded frame is:
+## The idea
+
+When one agent's output becomes another agent's input, a gateway can inspect it before it reaches the destination model. XRF explores whether authenticated, session-derived marks can provide one additional provenance signal at that boundary.
 
 ```text
-XRF | version | tag length | HMAC(session ID) | CRC32
+agent output
+    │
+    ▼
+provenance encoder ── distributed authenticated frames
+    │
+    ▼
+files, messages, or tool results
+    │
+    ▼
+destination gateway ── detector ── session registry ── policy event
+    │                                      │
+    └──────────────────────────────────────┴── allow / review / quarantine / block
 ```
 
-`XRF` is encoded rather than visibly prepended. It provides a fast magic-prefix
-rejection during scanning. The raw session ID and secret are never embedded.
+The raw session ID and secret are never embedded. The prototype derives an opaque tag with HMAC and encodes this frame:
 
-With the default 8-byte tag, the frame is 17 bytes. Each frame byte is repeated
-according to the requested odd redundancy:
+```text
+XRF | version | tag length | HMAC-derived session tag | CRC32
+```
 
-| Redundancy | Correctable symbol errors per group | Minimum eligible words |
-|---:|---:|---:|
-| 1 | 0 | 17 |
-| 3 | 1 | 51 |
-| 5 | 2 | 85 |
+The current in-band carrier uses Unicode variation selectors after eligible prose words. Code blocks, commands, URLs, quantities, likely named entities, acronyms, and negation terms are excluded.
 
-"Eligible" excludes code, URLs, numbers, likely named entities, acronyms, and
-negation terms. The detector reports capacity instead of silently degrading.
+## Why the frame is distributed
 
-## Setup
+A mark only at the beginning disappears when someone copies a later subsection. `embed_distributed_watermark` instead places complete, independently decodable frames throughout long prose. In the included 1,200-line run, a frame starts every 300 eligible words, producing approximately 105 recovery opportunities.
 
-The offline codec uses only the Python standard library:
+```text
+[complete frame + prose] … [complete frame + prose] … [complete frame + prose]
+          └──────── any sufficiently large copied subsection ────────┘
+```
+
+Frame-byte repetition and frame distribution solve different problems:
+
+- **Symbol repetition (`r1`, `r3`, `r5`)** repairs local carrier loss or corruption.
+- **Distributed frames** let a copied subsection decode independently of the document beginning.
+
+## What the experiments show
+
+Two checked-in, reproducible studies contain raw CSV/JSON data, reports, and figures.
+
+### Distributed-fragment study
+
+The deterministic study used 1,200 lines, approximately 31,690 eligible words, 105 frames, 30 trials per cell, and 720 random fragment trials. Each mutation round dropped 5% and corrupted 5% of carrier symbols.
+
+| Random fragment | Clean | After 1 round | After 2 rounds | After 3 rounds |
+|---:|---:|---:|---:|---:|
+| 5 lines | 30.0% | 26.7% | 16.7% | 10.0% |
+| 10 lines | 76.7% | 73.3% | 50.0% | 20.0% |
+| 25 lines | 100% | 96.7% | 73.3% | 36.7% |
+| 50 lines | 100% | 100% | 100% | 70.0% |
+| 100 lines | 100% | 100% | 100% | 90.0% |
+| 200 lines | 100% | 100% | 100% | 100% |
+
+Small fragments sometimes contain no complete frame. With this corpus and placement interval, 25 clean lines was the smallest tested size reaching at least 90% exact recovery.
+
+- [Study report](fragment_studies/fragment-study-20260906-120335/REPORT.md)
+- [Aggregate data](fragment_studies/fragment-study-20260906-120335/fragment-aggregate.csv)
+- [All 720 trials](fragment_studies/fragment-study-20260906-120335/fragment-trials.csv)
+
+### Long-form and model-handoff study
+
+![Long-form robustness benchmark](research_runs/xrf-study-20260906-104444/xrf-study-summary.png)
+
+This run used six Gemini-generated documents and 6,480 randomized perturbation trials. Clean exact recovery and visible-text fidelity were both 100%. Fivefold repetition was strong against carrier-symbol damage, but visible-word deletion caused synchronization failure.
+
+All three model-mediated handoffs removed the original invisible carrier even though visible similarity was 1.0 in those calls. A new editor mark applied after the handoff decoded in all three cases. That result supports **hop-local provenance**, not durable end-to-end tracking through arbitrary model transformations.
+
+- [Detailed report](research_runs/xrf-study-20260906-104444/REPORT.md)
+- [Aggregate curves](research_runs/xrf-study-20260906-104444/aggregate-results.csv)
+- [All 6,480 trials](research_runs/xrf-study-20260906-104444/trial-results.csv)
+- [Model handoffs](research_runs/xrf-study-20260906-104444/rewrite-results.json)
+
+## Code provenance
+
+The prototype does **not** insert invisible characters into source code. `watermark_lab/code_provenance.py` creates a detached, authenticated manifest containing:
+
+- an opaque session tag;
+- the exact content SHA-256;
+- per-chunk hashes; and
+- a manifest HMAC.
+
+This preserves the code byte-for-byte while identifying changed chunks. In the included 1,200-line code experiment, a one-line edit invalidated exactly one of 24 chunks; changes across a chunk boundary invalidated exactly two.
+
+The manifest detects change and provenance. It does not determine whether code is malicious; that still requires sandboxing, static analysis, command policy, scoped credentials, and runtime monitoring.
+
+## Quick start
+
+Requirements: Python 3.10 or later. Core encoding and detection use only the standard library. The visualization scripts require Pillow.
 
 ```bash
+python -m pip install -e '.[research]'
 python -m unittest discover -s tests -v
 ```
 
-Use a shell environment variable for the watermark secret:
+Add a single frame:
 
 ```bash
 export WATERMARK_SECRET='replace-with-at-least-16-random-characters'
-```
-
-Do not commit the secret or an API key.
-
-## Add a watermark
-
-```bash
-python scripts/add_watermark.py \
-  --session-id agent-session-blocked \
-  --redundancy 3 \
-  --stats \
+python scripts/add_watermark.py --session-id session-a --redundancy 3 \
   < input.txt > marked.txt
 ```
 
-The visible rendering of `marked.txt` is identical to `input.txt`, although the
-raw Unicode strings differ.
-
-## Detect and apply registry policy
+Detect it and consult the example registry:
 
 ```bash
 python scripts/detect_watermark.py \
   --registry examples/registry.json \
   --destination-session destination-agent \
-  --redundancy 3 \
-  < marked.txt
+  --redundancy 3 < marked.txt
 ```
 
-Possible policy decisions are `allow-self`, `block`, `quarantine`, and
-`review-cross-session`.
-
-## Benchmark
+Reproduce the offline distributed-fragment study:
 
 ```bash
-python scripts/benchmark.py --redundancy 1
+python scripts/run_fragment_study.py
+```
+
+Run the smaller carrier benchmark:
+
+```bash
 python scripts/benchmark.py --redundancy 3
-python scripts/benchmark.py --tag-bytes 4 --redundancy 5
 ```
 
-The benchmark measures capacity, exact tag recovery, invisible-character
-overhead, unmarked false positives, CRC validation, and survival under Unicode
-normalization, selector deletion/corruption, stripping, and spacing changes.
-
-Supply a custom corpus as JSONL records with a `text` field:
+The Gemini studies are optional. Put `GOOGLE_API_KEY=...` in the ignored `secret.env`, then run:
 
 ```bash
-python scripts/benchmark.py --input-jsonl corpus.jsonl
+python scripts/run_gemini_simulations.py --model gemini-3.5-flash-lite
+python scripts/run_research_study.py --model gemini-3.5-flash-lite
 ```
 
-## Optional OpenAI-generated corpus
+API keys are never reused as watermark keys or written to result bundles.
 
-Install the optional dependency and set the API key locally:
-
-```bash
-python -m pip install -e '.[openai]'
-export OPENAI_API_KEY='your-key-in-your-shell'
-python scripts/generate_samples_openai.py \
-  --prompts examples/prompts.jsonl \
-  --output generated.jsonl \
-  --model YOUR_MODEL_ID \
-  --min-words 120
-python scripts/benchmark.py --input-jsonl generated.jsonl
-```
-
-The generator uses the Responses API and `response.output_text`. The model ID is
-required explicitly so experiments remain reproducible.
-
-## Gemini simulation folders
-
-Put `GOOGLE_API_KEY=...` in the ignored `secret.env` file. For a consistent
-watermark secret across runs, also add a separate `WATERMARK_SECRET=...` value;
-the Google API key is never reused as a watermark key.
-
-```bash
-python scripts/run_gemini_simulations.py \
-  --model gemini-3.5-flash-lite \
-  --samples 3 \
-  --min-words 120 \
-  --redundancies 1 3
-```
-
-Every configuration gets its own folder under `simulations/gemini-<timestamp>/`:
+## Repository map
 
 ```text
-simulation-001-r3/
-├── original.txt
-├── watermarked.txt
-├── visible_diff.txt
-├── codepoint_diff.json
-├── metadata.json
-├── metrics.json
-├── detection.json
-├── attack_results.json
-└── attacks/
+watermark_lab/
+  core.py                 frame, carriers, single/distributed encoder, detector
+  code_provenance.py      detached authenticated code manifests
+  registry.py             session lookup and example policy decisions
+  attacks.py              synthetic transformations
+  reporting.py            fidelity and result helpers
+scripts/
+  add_watermark.py        command-line encoder
+  detect_watermark.py     command-line detector and registry lookup
+  benchmark.py            compact offline benchmark
+  run_fragment_study.py   long fragments, repeated damage, code manifests
+  run_research_study.py   long-form and model-mediated experiments
+tests/                     unit and study tests
+fragment_studies/         selected reproducible fragment evidence
+research_runs/            selected long-form evidence
 ```
 
-`visible_diff.txt` shows whether readable text changed. `codepoint_diff.json`
-shows every invisible variation selector, its position, and its encoded byte.
+## Security and privacy limitations
 
-The runner defaults to `gemini-3.5-flash-lite`. Google retired
-`gemini-2.5-flash-lite` for new users and the live API response recommends the
-3.5 replacement.
+- Variation selectors are easy for a Unicode-aware adversary to locate and strip.
+- Normalizers, editors, messaging systems, and models may remove the carrier accidentally.
+- Word insertion or deletion can desynchronize the current repetition codec.
+- A valid mark authenticates an issued tag, not the truth, safety, or intent of the text.
+- Watermark-based session correlation can create privacy and tracking risks.
+- CRC is for corruption detection; HMAC supplies authentication.
+- A compromised encoder key permits forged tags until that key is rotated or revoked.
+- Covert channels through code, filenames, timing, encryption, and tool behavior remain outside this carrier.
 
-## Known limitations and next research stage
+See [SECURITY.md](SECURITY.md) for reporting guidance. Production designs should prefer signed envelopes and transparency logs, using in-band marks only as a secondary recovery signal.
 
-- Removing variation selectors destroys this carrier completely.
-- Word insertion/deletion can desynchronize repeated groups.
-- An agent can communicate through code, URLs, filenames, encryption, timing,
-  or other channels that cannot safely carry this watermark.
-- CRC detects corruption but is not authentication; HMAC-derived tags prevent
-  exposure of raw session identifiers, while registry matching establishes the
-  identity.
-- Text watermarking attributes a source. A separate monitor decides whether the
-  source session is malicious.
+## Status and roadmap
 
-The next codec should operate during model decoding: spread a multi-bit payload
-across keyed token partitions, retain soft token likelihoods, and use a
-fountain/LDPC-style decoder across multiple messages. This repository separates
-the frame, registry, detector, attacks, and benchmark so that carrier can be
-added without changing policy logic.
+This repository demonstrates a testable idea, not a production system or peer-reviewed result. Useful next experiments include independently synchronized shards, fountain or erasure coding, content-defined placement, larger unmarked corpora for false-positive measurement, multilingual text, copy/paste across common platforms, translation, paraphrase, and adaptive stripping attacks.
 
-## Longer research study
+## License
 
-The extended study generates long Gemini documents, runs randomized error curves,
-asks a second Gemini session to edit marked material, layers multiple legitimate
-session marks, mixes a malicious section into an otherwise legitimate artifact,
-and exports provenance-graph data.
-
-```bash
-python scripts/run_research_study.py \
-  --model gemini-3.5-flash-lite \
-  --lengths 250 500 1000 \
-  --samples-per-length 2 \
-  --seeds 20
-```
-
-Each run writes a research bundle under `research_runs/xrf-study-<timestamp>/`
-with original and marked artifacts, randomized trial CSV, aggregated recovery
-curves, Gemini rewrite experiments, mixed-session policy results, and graph data.
+Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).

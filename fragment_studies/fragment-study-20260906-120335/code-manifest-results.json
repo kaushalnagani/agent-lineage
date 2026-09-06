@@ -1,0 +1,47 @@
+[
+  {
+    "case": "no-edit control",
+    "edited_lines": 0,
+    "total_chunks": 24,
+    "matching_chunks": 24,
+    "exact_content": true,
+    "manifest_authentic": true,
+    "changed_chunks": "[]"
+  },
+  {
+    "case": "single-line edit",
+    "edited_lines": 1,
+    "total_chunks": 24,
+    "matching_chunks": 23,
+    "exact_content": false,
+    "manifest_authentic": true,
+    "changed_chunks": "[5]"
+  },
+  {
+    "case": "three-line localized edit",
+    "edited_lines": 3,
+    "total_chunks": 24,
+    "matching_chunks": 23,
+    "exact_content": false,
+    "manifest_authentic": true,
+    "changed_chunks": "[12]"
+  },
+  {
+    "case": "two-line cross-chunk-boundary edit",
+    "edited_lines": 2,
+    "total_chunks": 24,
+    "matching_chunks": 22,
+    "exact_content": false,
+    "manifest_authentic": true,
+    "changed_chunks": "[3, 4]"
+  },
+  {
+    "case": "two scattered single-line edits",
+    "edited_lines": 2,
+    "total_chunks": 24,
+    "matching_chunks": 22,
+    "exact_content": false,
+    "manifest_authentic": true,
+    "changed_chunks": "[2, 17]"
+  }
+]

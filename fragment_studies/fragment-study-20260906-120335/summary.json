@@ -1,0 +1,234 @@
+{
+  "created_at": "2026-09-06T06:33:39.407224+00:00",
+  "seed": 20260906,
+  "corpus_lines": 1200,
+  "corpus_words": 31690,
+  "eligible_carriers": 31690,
+  "frame_minimum_words": 51,
+  "frames_embedded": 105,
+  "interval_carriers": 300,
+  "tag_bytes": 8,
+  "redundancy": 3,
+  "fragment_lengths": [
+    5,
+    10,
+    25,
+    50,
+    100,
+    200
+  ],
+  "trials_per_cell": 30,
+  "max_mutation_rounds": 3,
+  "drop_rate": 0.05,
+  "corrupt_rate": 0.05,
+  "total_fragment_trials": 720,
+  "code_lines": 1200,
+  "chunk_lines": 50,
+  "total_code_chunks": 24,
+  "fragment_aggregate": [
+    {
+      "fragment_lines": 5,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 0.3
+    },
+    {
+      "fragment_lines": 5,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 0.26666666666666666
+    },
+    {
+      "fragment_lines": 5,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 0.16666666666666666
+    },
+    {
+      "fragment_lines": 5,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 0.1
+    },
+    {
+      "fragment_lines": 10,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 0.7666666666666667
+    },
+    {
+      "fragment_lines": 10,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 0.7333333333333333
+    },
+    {
+      "fragment_lines": 10,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 0.5
+    },
+    {
+      "fragment_lines": 10,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 0.2
+    },
+    {
+      "fragment_lines": 25,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 25,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 0.9666666666666667
+    },
+    {
+      "fragment_lines": 25,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 0.7333333333333333
+    },
+    {
+      "fragment_lines": 25,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 0.36666666666666664
+    },
+    {
+      "fragment_lines": 50,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 50,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 50,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 50,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 0.7
+    },
+    {
+      "fragment_lines": 100,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 100,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 100,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 100,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 0.9
+    },
+    {
+      "fragment_lines": 200,
+      "mutation_rounds": 0,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 200,
+      "mutation_rounds": 1,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 200,
+      "mutation_rounds": 2,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    },
+    {
+      "fragment_lines": 200,
+      "mutation_rounds": 3,
+      "trials": 30,
+      "exact_recovery_rate": 1.0
+    }
+  ],
+  "failure_boundaries": {
+    "threshold": 0.9,
+    "min_reliable_fragment_lines_at_zero_damage": 25,
+    "max_tolerated_mutation_rounds_at_largest_fragment": 3,
+    "largest_fragment_lines": 200,
+    "first_sub_threshold_cell": {
+      "fragment_lines": 5,
+      "mutation_rounds": 0,
+      "exact_recovery_rate": 0.3
+    }
+  },
+  "clean_exact_recovery_rate_at_largest_fragment": 1.0,
+  "code_manifest": [
+    {
+      "case": "no-edit control",
+      "edited_lines": 0,
+      "total_chunks": 24,
+      "matching_chunks": 24,
+      "exact_content": true,
+      "manifest_authentic": true,
+      "changed_chunks": "[]"
+    },
+    {
+      "case": "single-line edit",
+      "edited_lines": 1,
+      "total_chunks": 24,
+      "matching_chunks": 23,
+      "exact_content": false,
+      "manifest_authentic": true,
+      "changed_chunks": "[5]"
+    },
+    {
+      "case": "three-line localized edit",
+      "edited_lines": 3,
+      "total_chunks": 24,
+      "matching_chunks": 23,
+      "exact_content": false,
+      "manifest_authentic": true,
+      "changed_chunks": "[12]"
+    },
+    {
+      "case": "two-line cross-chunk-boundary edit",
+      "edited_lines": 2,
+      "total_chunks": 24,
+      "matching_chunks": 22,
+      "exact_content": false,
+      "manifest_authentic": true,
+      "changed_chunks": "[3, 4]"
+    },
+    {
+      "case": "two scattered single-line edits",
+      "edited_lines": 2,
+      "total_chunks": 24,
+      "matching_chunks": 22,
+      "exact_content": false,
+      "manifest_authentic": true,
+      "changed_chunks": "[2, 17]"
+    }
+  ],
+  "secret_recorded": false
+}

@@ -6,6 +6,7 @@ from .core import (
     WatermarkConfig,
     detect_watermark,
     detect_watermarks,
+    embed_distributed_watermark,
     embed_watermark,
     session_tag,
 )
@@ -16,6 +17,7 @@ __all__ = [
     "WatermarkConfig",
     "detect_watermark",
     "detect_watermarks",
+    "embed_distributed_watermark",
     "embed_watermark",
     "session_tag",
 ]
