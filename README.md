@@ -197,6 +197,8 @@ See [SECURITY.md](SECURITY.md) for reporting guidance. Production designs should
 
 This repository demonstrates a testable idea, not a production system or peer-reviewed result. Useful next experiments include independently synchronized shards, fountain or erasure coding, content-defined placement, larger unmarked corpora for false-positive measurement, multilingual text, copy/paste across common platforms, translation, paraphrase, and adaptive stripping attacks.
 
+The companion long-form explanation is available as a [Medium-ready article draft](docs/medium-article.md).
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE).
